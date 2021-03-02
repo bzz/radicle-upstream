@@ -12,6 +12,7 @@ import * as source from "../../source";
 
 import IconCommit from "../../../DesignSystem/Primitive/Icon/Commit.svelte";
 import IconFile from "../../../DesignSystem/Primitive/Icon/File.svelte";
+import IconRevision from "../../../DesignSystem/Primitive/Icon/Revision.svelte";
 
 export enum ViewKind {
   Aborted = "ABORTED",
@@ -51,6 +52,7 @@ interface Screen {
   code: Writable<Code>;
   history: source.CommitsHistory;
   menuItems: HorizontalItem[];
+  mergeRequests: source.MergeRequest[];
   peer: User;
   project: Project;
   revisions: [source.Branch | source.Tag];
@@ -87,6 +89,7 @@ export const fetch = async (project: Project, peer: User): Promise<void> => {
 
   try {
     const revisions = await source.fetchRevisions(project.urn, peer.peerId);
+    const mergeRequests = await source.fetchMergeRequests(project.urn);
     const selectedRevision = defaultRevision(project, revisions);
     const [history, [tree, root]] = await Promise.all([
       source.fetchCommits(project.urn, peer.peerId, selectedRevision),
@@ -96,7 +99,8 @@ export const fetch = async (project: Project, peer: User): Promise<void> => {
     screenStore.success({
       code: writable<Code>(root),
       history,
-      menuItems: menuItems(project, history),
+      menuItems: menuItems(project, history, mergeRequests),
+      mergeRequests,
       peer,
       project,
       revisions: mapRevisions(revisions),
@@ -194,7 +198,7 @@ export const selectRevision = async (
       screenStore.success({
         ...screen.data,
         history,
-        menuItems: menuItems(project, history),
+        menuItems: menuItems(project, history, screen.data.mergeRequests),
         selectedRevision: {
           request: null,
           selected: revision,
@@ -362,9 +366,48 @@ const mapRevisions = (
   return branches;
 };
 
+const mergeRequestDetailsStore = remote.createStore<source.MergeRequestDetails>();
+export const mergeRequestDetails = mergeRequestDetailsStore.readable;
+
+export const fetchMergeRequest = async (
+  mergeRequest: source.MergeRequest
+): Promise<void> => {
+  const screen = get(screenStore);
+
+  if (screen.status === remote.Status.Success) {
+    const {
+      data: { project },
+    } = screen;
+
+    try {
+      const revision: source.Tag = {
+        type: source.RevisionType.Tag,
+        name: `merge-request/${mergeRequest.id}`,
+      };
+      const commits = await source.fetchCommits(
+        project.urn,
+        mergeRequest.peer_id,
+        revision
+      );
+      mergeRequestDetailsStore.success({
+        mergeRequest,
+        commits,
+      });
+    } catch (err) {
+      mergeRequestDetailsStore.error(error.fromException(err));
+      error.show({
+        code: error.Code.CommitFetchFailure,
+        message: "Could not fetch merge request",
+        source: err,
+      });
+    }
+  }
+};
+
 const menuItems = (
   project: Project,
-  history: source.CommitsHistory
+  history: source.CommitsHistory,
+  mergeRequests: source.MergeRequest[]
 ): HorizontalItem[] => {
   return [
     {
@@ -378,6 +421,13 @@ const menuItems = (
       title: "Commits",
       counter: history.stats.commits,
       href: path.projectSourceCommits(project.urn),
+      looseActiveStateMatching: true,
+    },
+    {
+      icon: IconRevision,
+      title: "Merge Requests",
+      counter: mergeRequests.length,
+      href: path.projectSourceMergeRequests(project.urn),
       looseActiveStateMatching: true,
     },
   ];

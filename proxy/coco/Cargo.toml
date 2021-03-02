@@ -32,15 +32,15 @@ features = [ "json-value" ]
 
 [dependencies.librad]
 git = "https://github.com/radicle-dev/radicle-link.git"
-rev = "0336ae588f09c3031ea2b222502bc489797b1113"
+branch = "thomas/fetch-tag-refs"
 
 [dependencies.radicle-git-ext]
 git = "https://github.com/radicle-dev/radicle-link.git"
-rev = "0336ae588f09c3031ea2b222502bc489797b1113"
+branch = "thomas/fetch-tag-refs"
 
 [dependencies.radicle-git-helpers]
 git = "https://github.com/radicle-dev/radicle-link.git"
-rev = "0336ae588f09c3031ea2b222502bc489797b1113"
+branch = "thomas/fetch-tag-refs"
 
 [dependencies.radicle-surf]
 version = "0.5"

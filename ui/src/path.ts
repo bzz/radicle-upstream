@@ -25,6 +25,10 @@ export const projectSourceCommit = (urn: Urn, hash: string): string =>
   `/projects/${urn}/source/commit/${hash}`;
 export const projectSourceCommits = (urn: Urn): string =>
   `/projects/${urn}/source/commits`;
+export const projectSourceMergeRequests = (urn: Urn): string =>
+  `/projects/${urn}/source/merge_requests`;
+export const projectSourceMergeRequest = (urn: Urn): string =>
+  `/projects/${urn}/source/merge_request`;
 export const project = projectSourceFiles;
 
 export const parseQueryString = (querystring: string): ParsedQs => {

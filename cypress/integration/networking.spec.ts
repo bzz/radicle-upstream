@@ -237,6 +237,51 @@ context("p2p networking", () => {
           commands
             .pickWithContent(["commits-page"], contributorCommitSubject)
             .should("exist");
+
+          cy.log("test revision replication from contributor to maintainer");
+
+          nodeManager.asNode(contributorNode);
+
+          cy.log("add a merge request to the project from contributor's node");
+          const mergeRequestCommitSubject =
+            "Merge request replication from contributor to maintainer";
+          const mergeRequestTag = "feature-1";
+
+          nodeManager.createMergeRequest({
+            repositoryPath: forkedProjectPath,
+            radHome: contributorNode.radHome,
+            tag: mergeRequestTag,
+            subject: mergeRequestCommitSubject,
+            passphrase: contributor.passphrase,
+            name: contributor.fullName,
+          });
+
+          cy.log("refresh the UI for the merge request to show up");
+          cy.get("body").type("{esc}");
+          commands.pick("sidebar", "profile").click();
+          commands.pick("project-list-entry-new-fancy-project.xyz").click();
+
+          cy.log("contributor sees the commit related to the merge request");
+          commands.pickWithContent(["peer-selector"], "abbey").should("exist");
+          commands.pickWithContent(["peer-selector"], "you").should("exist");
+          commands.pick("commits-tab").click();
+          commands
+            .pickWithContent(["commits-page"], mergeRequestCommitSubject)
+            .should("exist");
+
+          cy.log("contributor sees the merge request");
+          commands.pick("merge requests-tab").click();
+          commands
+            .pickWithContent(["merge-request-list"], mergeRequestTag)
+            .should("exist");
+
+          cy.log("maintainer received the contributor's merge request");
+          nodeManager.asNode(maintainerNode);
+          commands.pick("project-list-entry-new-fancy-project.xyz").click();
+          commands.pick("merge requests-tab").click();
+          commands
+            .pickWithContent(["merge-request-list"], mergeRequestTag)
+            .should("exist");
         }
       );
     });
