@@ -262,41 +262,12 @@ mod handler {
         project_urn: coco::Urn,
         ctx: context::Unsealed,
     ) -> Result<impl Reply, Rejection> {
-        let session = session::get_current(&ctx.store)?.expect("no session exists");
-        let fake_merge_requests = vec![
-            super::MergeRequest {
-                id: String::from("merle/new-feature"),
-                merged: false,
-                peer_id: session.identity.peer_id,
-                identity: None,
-                title: None,
-                description: None,
-            },
-            super::MergeRequest {
-                id: String::from("add-readme"),
-                merged: true,
-                peer_id: session.identity.peer_id,
-                identity: Some(session.identity.clone()),
-                title: Some("only a title, no description".to_string()),
-                description: None,
-            },
-            super::MergeRequest {
-                id: String::from("fix-typo"),
-                merged: false,
-                peer_id: session.identity.peer_id,
-                identity: None,
-                title: Some("This fixes a typo!".to_string()),
-                description: Some("Here I describe the typo\n in length!".to_string()),
-            },
-        ];
-
         let merge_requests = coco::merge_request::list(&ctx.peer, project_urn)
             .await
             .map_err(error::Error::from)?;
         let merge_requests = merge_requests
             .into_iter()
             .map(super::MergeRequest::from)
-            .chain(fake_merge_requests)
             .collect::<Vec<_>>();
 
         Ok(reply::json(&merge_requests))
