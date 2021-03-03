@@ -281,6 +281,11 @@ context("p2p networking", () => {
           commands.pick("merge requests-tab").click();
           commands
             .pickWithContent(["merge-request-list"], mergeRequestTag)
+            .click();
+
+          cy.log("maintainer can see the merge request details");
+          commands
+            .pickWithContent(["merge-request-page"], mergeRequestTag)
             .should("exist");
         }
       );

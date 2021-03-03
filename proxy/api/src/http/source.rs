@@ -326,6 +326,7 @@ struct MergeRequest {
     identity: Option<identity::Identity>,
     title: Option<String>,
     description: Option<String>,
+    commit: String,
 }
 
 impl From<coco::merge_request::MergeRequest> for MergeRequest {
@@ -335,7 +336,7 @@ impl From<coco::merge_request::MergeRequest> for MergeRequest {
             merged,
             peer,
             message,
-            commit: _,
+            commit,
         } = merge_request;
         let [title, description] = match message {
             Some(msg) => {
@@ -360,8 +361,9 @@ impl From<coco::merge_request::MergeRequest> for MergeRequest {
             identity: peer
                 .replicated()
                 .map(|peer| identity::Identity::from((peer.peer_id(), peer.status().user.clone()))),
-            title: title,
-            description: description,
+            title,
+            description,
+            commit: commit.to_string(),
         }
     }
 }

@@ -380,9 +380,9 @@ export const fetchMergeRequest = async (
     } = screen;
 
     try {
-      const revision: source.Tag = {
-        type: source.RevisionType.Tag,
-        name: `merge-request/${mergeRequest.id}`,
+      const revision: source.Sha = {
+        type: source.RevisionType.Sha,
+        sha: mergeRequest.commit,
       };
       const commits = await source.fetchCommits(
         project.urn,

@@ -127,6 +127,7 @@ export interface MergeRequest {
   identity?: Identity;
   title?: string;
   description?: string;
+  commit: string;
 }
 
 export interface MergeRequestDetails {
