@@ -4,7 +4,7 @@
 
   import * as path from "../../../src/path";
   import type { Project } from "../../../src/project";
-  import { fetchMergeRequest, store } from "../../../src/screen/project/source";
+  import { store } from "../../../src/screen/project/source";
   import type { MergeRequest } from "../../../src/source";
 
   import { EmptyState, Error, Remote } from "../../../DesignSystem/Component";
@@ -12,8 +12,7 @@
 
   const project: Project = getContext("project-page").project;
   const select = ({ detail: mergeRequest }: { detail: MergeRequest }) => {
-    fetchMergeRequest(mergeRequest);
-    push(path.projectSourceMergeRequest(project.urn));
+    push(path.projectSourceMergeRequest(project.urn, mergeRequest));
   };
 </script>
 

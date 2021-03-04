@@ -366,10 +366,10 @@ const mapRevisions = (
   return branches;
 };
 
-const mergeRequestDetailsStore = remote.createStore<source.MergeRequestDetails>();
-export const mergeRequestDetails = mergeRequestDetailsStore.readable;
+const mergeRequestCommitsStore = remote.createStore<source.CommitsHistory>();
+export const mergeRequestCommits = mergeRequestCommitsStore.readable;
 
-export const fetchMergeRequest = async (
+export const fetchMergeRequestCommits = async (
   mergeRequest: source.MergeRequest
 ): Promise<void> => {
   const screen = get(screenStore);
@@ -389,15 +389,12 @@ export const fetchMergeRequest = async (
         mergeRequest.peer_id,
         revision
       );
-      mergeRequestDetailsStore.success({
-        mergeRequest,
-        commits,
-      });
+      mergeRequestCommitsStore.success(commits);
     } catch (err) {
-      mergeRequestDetailsStore.error(error.fromException(err));
+      mergeRequestCommitsStore.error(error.fromException(err));
       error.show({
         code: error.Code.CommitFetchFailure,
-        message: "Could not fetch merge request",
+        message: "Could not fetch merge request commits",
         source: err,
       });
     }
