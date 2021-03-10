@@ -17,9 +17,10 @@ use librad::{
         replication::{self, ReplicateResult},
         tracking,
         types::{Namespace, Reference, Single},
+        Urn,
     },
     git_ext::{OneLevel, RefLike},
-    identities::{delegation::Indirect, payload, Person, Project, SomeIdentity, Urn},
+    identities::{delegation::Indirect, payload, Person, Project, SomeIdentity},
     internal::canonical::Cstring,
     keys,
     net::peer::Peer,
@@ -358,18 +359,20 @@ pub async fn init_project(
         .project_name()
         .map_err(crate::project::create::Error::from)?;
     let owner = owner.clone();
+    let payload = payload::Project {
+        default_branch: Some(Cstring::from(default_branch)),
+        description: Some(Cstring::from(description)),
+        name: Cstring::from(name),
+    };
+    let delegations = Indirect::from(owner.clone().into_inner().into_inner());
     let project = peer
         .using_storage(move |store| {
-            project::create(
-                store,
-                owner.clone(),
-                payload::Project {
-                    default_branch: Some(Cstring::from(default_branch)),
-                    description: Some(Cstring::from(description)),
-                    name: Cstring::from(name),
-                },
-                Indirect::from(owner.into_inner().into_inner()),
-            )
+            let urn = project::urn(store, payload.clone(), delegations.clone())?;
+            if store.has_urn(&urn)? {
+                Err(Error::IdentityExists(urn))
+            } else {
+                Ok(project::create(store, owner.clone(), payload, delegations)?)
+            }
         })
         .await??;
     log::debug!(

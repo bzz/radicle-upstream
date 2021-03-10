@@ -409,7 +409,7 @@ mod test {
     #[tokio::test]
     async fn blob() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
 
         let urn = replicate_platinum(&ctx).await?;
@@ -529,7 +529,7 @@ mod test {
     #[tokio::test]
     async fn blob_dev_branch() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
 
         let urn = replicate_platinum(&ctx).await?;
@@ -573,7 +573,7 @@ mod test {
     #[tokio::test]
     async fn branches() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
         let urn = replicate_platinum(&ctx).await?;
 
@@ -601,7 +601,7 @@ mod test {
     #[allow(clippy::indexing_slicing)]
     async fn commit() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
 
         let urn = replicate_platinum(&ctx).await?;
@@ -646,7 +646,7 @@ mod test {
     #[tokio::test]
     async fn commits() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
 
         let urn = replicate_platinum(&ctx).await?;
@@ -685,7 +685,7 @@ mod test {
     #[tokio::test]
     async fn local_state() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
 
         let mut path = env::current_dir()?;
@@ -718,7 +718,7 @@ mod test {
     #[tokio::test]
     async fn tags() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
 
         let urn = replicate_platinum(&ctx).await?;
@@ -748,7 +748,7 @@ mod test {
     #[tokio::test]
     async fn tree() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
         let urn = replicate_platinum(&ctx).await?;
 
@@ -817,7 +817,7 @@ mod test {
             .add(b'=');
 
         let tmp_dir = tempfile::tempdir()?;
-        let ctx = context::Unsealed::tmp(&tmp_dir).await?;
+        let (ctx, _) = context::Unsealed::tmp(&tmp_dir).await?;
         let api = super::filters(ctx.clone().into());
         let urn = replicate_platinum(&ctx).await?;
 

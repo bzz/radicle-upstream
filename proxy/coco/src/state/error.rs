@@ -1,8 +1,10 @@
 //! Capture `State` related error variants.
 
 use librad::{
-    git::types::{One, Reference},
-    identities::Urn,
+    git::{
+        types::{One, Reference},
+        Urn,
+    },
     net,
 };
 use radicle_surf::vcs::git::git2;
@@ -91,6 +93,10 @@ pub enum Error {
     /// An error occurred when attempting to track or untrack a peer.
     #[error(transparent)]
     Tracking(#[from] librad::git::tracking::Error),
+
+    /// Attempted to create an identity that already exists.
+    #[error("the URN `{0}` already exists")]
+    IdentityExists(Urn),
 
     /// There were no references for a Browser to be initialised.
     #[error("we could not find a default branch for '{name}@{urn}'")]

@@ -8,8 +8,7 @@ use tokio::{
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
 use librad::{
-    git_ext::OneLevel, identities::Urn, keys::SecretKey, net::discovery, peer::PeerId, reflike,
-    signer,
+    git::Urn, git_ext::OneLevel, keys::SecretKey, net::discovery, peer::PeerId, reflike, signer,
 };
 
 use coco::{config, project, seed::Seed, Paths, Peer, PeerEvent, PeerStatus, RunConfig};
@@ -68,6 +67,8 @@ pub async fn requested(
     )
 }
 
+/// Assert that the `PeerStatus` transitions to `Online` and the number of connected peers is equal
+/// to or more than `min_connected`.
 #[allow(dead_code)]
 pub async fn connected(
     mut receiver: broadcast::Receiver<PeerEvent>,
