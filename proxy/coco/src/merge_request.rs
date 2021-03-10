@@ -65,7 +65,7 @@ pub async fn list(
         for r in refs {
             let r = r?;
             let tag = monorepo.find_tag(r.target().unwrap())?;
-            let merged = monorepo
+            let merged = target == tag.target_id() || monorepo
                 .graph_descendant_of(target, tag.target_id())
                 .unwrap();
             let id = tag.name().unwrap().strip_prefix("merge-request/").unwrap();
