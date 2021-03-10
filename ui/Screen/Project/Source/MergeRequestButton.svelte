@@ -49,9 +49,9 @@
         <p
           class="typo-text-small-mono"
           style="color: var(--color-foreground-level-6)">
-          git tag patches/branch
+          git tag --annotate merge-request/name-your-tag
           <br />
-          git push tags
+          git push --tags rad
         </p>
       </Copyable>
     </Hoverable>
