@@ -5,12 +5,12 @@
   } from "../../src/ethereum";
   import { ethereumAddress } from "../../src/identity";
   import { store, Status } from "../../src/wallet";
-  import * as notification from "../../src/notification";
   import * as pool from "../../src/funding/pool";
 
   import ConnectWallet from "../../DesignSystem/Component/Wallet/Connect.svelte";
   import WalletPanel from "../../DesignSystem/Component/Wallet/Panel.svelte";
   import WrongNetwork from "../../DesignSystem/Component/Wallet/WrongNetwork.svelte";
+  import WrongAccount from "../../DesignSystem/Component/Wallet/WrongAccount.svelte";
 
   import Pool from "../Funding/Pool.svelte";
   import LinkAddress from "../Funding/LinkAddress.svelte";
@@ -19,18 +19,6 @@
   // Hack to have Svelte working with checking the $wallet variant
   // and thus be able to access its appropriate fields.
   $: w = $wallet;
-
-  $: if (
-    $ethereumAddress !== null &&
-    w.status === Status.Connected &&
-    w.connected.account.address !== $ethereumAddress
-  ) {
-    notification.error({
-      message:
-        "This wallet doesn’t match the Ethereum address that is linked to your Radicle ID.",
-    });
-    wallet.disconnect();
-  }
 </script>
 
 <style>
@@ -55,7 +43,9 @@
     {#if supportedNetwork($ethereumEnvironment) === w.connected.network}
       {#if $ethereumAddress === null}
         <LinkAddress />
-      {:else if $ethereumAddress === w.connected.account.address}
+      {:else if $ethereumAddress !== w.connected.account.address}
+        <WrongAccount expectedAddress={$ethereumAddress} />
+      {:else}
         <Pool pool={pool.make(wallet)} />
       {/if}
     {:else}
